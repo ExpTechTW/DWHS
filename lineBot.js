@@ -21,7 +21,7 @@ let Cache = JSON.parse(fs.readFileSync('./Json/Line/Cache.json').toString())
 //#endregion
 
 //#region 變數
-let ver = "22w12-pre2"
+let ver = "22w12-pre3"
 //#endregion
 
 //#region 初始化
@@ -34,12 +34,6 @@ const client = linebot({
 })
 const linebotParser = client.parser()
 app.post('/webhook', linebotParser)
-//#endregion
-
-//#region 好友
-client.on('follow', function (event) {
-    event.reply("")
-})
 //#endregion
 
 setInterval(async () => {
@@ -56,7 +50,7 @@ setInterval(async () => {
 //#region 訊息處理區塊
 client.on('message', async function (event) {
     if (event.message.text == "即時氣象數據") {
-        event.reply("CAAWMS\n複合式全天候自動氣象監測系統\n(Composite All-weather Automatic Weather Monitoring System)\n\n之後學校會架設監測站\n敬請期待")
+        event.reply("CAAWMS\n複合式全天候自動氣象監測系統\n(Composite All-weather Automatic Weather Monitoring System)\n\n測站: 0001 大灣高中\nPM2.5: N/A\n溫度: N/A\n濕度: N/A\n氣壓: N/A\n\n加速度\nXraw: N/A\nYraw: N/A\nZraw: N/A\n\n陀螺儀\nXnorm: N/A\nYnorm: N/A\nZnorm: N/A\n\n卡爾曼濾波\nX: N/A\nY: N/A\nZ: N/A")
     } else if (event.message.text == "小時精準預報") {
         let data = {
             "APIkey": "a5ef9cb2cf9b0c86b6ba71d0fc39e329",
@@ -83,12 +77,14 @@ client.on('message', async function (event) {
             "FormatVersion": 1
         }
         let res = await API.main(ExpTech, data)
-        event.reply({
+        await event.reply([{
             type: 'image',
             originalContentUrl: res.data["response"]["picture"],
             previewImageUrl: res.data["response"]["picture"]
-        })
-        //client.push(event.source.userId,res.data["response"]["picture"])
+        }, {
+            type: 'text',
+            text: "若預覽出現問題請點擊下方鏈接\n" + res.data["response"]["picture"]
+        }])
     } else if (event.message.text == "最新地震") {
         let data = {
             "APIkey": "a5ef9cb2cf9b0c86b6ba71d0fc39e329",
@@ -110,22 +106,25 @@ client.on('message', async function (event) {
         }
         let res = await API.main(ExpTech, data)
         let response = res.data["response"]
-        await client.push(event.source.userId, {
+        await event.reply([{
             type: 'image',
             originalContentUrl: response["map"],
             previewImageUrl: response["map"]
-        })
-        await client.push(event.source.userId, {
+        }, {
             type: 'image',
             originalContentUrl: response["data"],
             previewImageUrl: response["data"]
-        })
-        await client.push(event.source.userId, {
+        }, {
             type: 'image',
             originalContentUrl: response["level"],
             previewImageUrl: response["level"]
-        })
-        await client.push(event.source.userId, "地震發生後最快 2 分鐘內即可獲取此項數據\n上圖時間為 UT 時間 請自行轉換為 UT+8 (TW 台灣)")
+        }, {
+            type: 'text',
+            text: "地震發生後最快 2 分鐘內即可獲取此項數據\n上圖時間為 UT 時間 請自行轉換為 UT+8 (TW 台灣)"
+        }, {
+            type: 'text',
+            text: "若預覽出現問題請點擊下方鏈接\n" + response["map"]
+        }])
     }
 })
 //#endregion
