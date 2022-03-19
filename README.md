@@ -6,12 +6,22 @@
 - DWHS (DWHS Weather Helper Service)
 
 ## 索引
+- [文檔](#文檔)
+- [注意](#注意)
 - [貢獻者](#貢獻者)
 - [發佈規則](#發佈規則)
 - [合作](#合作)
 
+## 文檔
+- [操作文檔]()
+
+## 注意
+- 採用 `POST (HTTP)` 與 [API服務器](https://github.com/ExpTechTW/API) 交互
+- 此服務 依賴 [API服務器](https://github.com/ExpTechTW/API)
+
 ## 貢獻者
-- whes1015 `文檔`
+- whes1015 `程式開發` `文檔`
+- 郭彥銘 `圖像設計`
 
 ------
 
