@@ -3,7 +3,7 @@
 
 ------
 
-- DWHS (DWHS Weather Helper Service)
+- DWHS Weather Helper Service ( DWHS 天氣小幫手 )
 
 ## 索引
 - [文檔](#文檔)
