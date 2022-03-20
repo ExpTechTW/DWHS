@@ -36,16 +36,52 @@ const linebotParser = client.parser()
 app.post('/webhook', linebotParser)
 //#endregion
 
+check()
+
 setInterval(async () => {
-    var time = (new Date().getMonth() + 1).toString() + new Date().getDate().toString()
-    if (Cache["TimeStamp"] != time && new Date().getHours() >= 6) {
-        Cache["TimeStamp"] = time
-        fs.writeFileSync('./Json/Line/Cache.json', JSON.stringify(Cache, null, "\t"))
-        for (let index = 0; index < User["AllUser"].length; index++) {
-            (User["AllUser"][index], "早安")
-        }
-    }
+    check()
 }, 30000)
+
+async function check() {
+    var time = (new Date().getMonth() + 1).toString() + new Date().getDate().toString()
+    if (Cache["TimeStamp"] != time && new Date().getHours() >= 5) {
+        Cache["TimeStamp"] = time
+        let data = {
+            "APIkey": "a5ef9cb2cf9b0c86b6ba71d0fc39e329",
+            "Function": "data",
+            "Type": "dwhs-weather-accuweather",
+            "FormatVersion": 1,
+            "Raw": true
+        }
+        let res = await API.main(ExpTech, data)
+        let Data = res.data["response"]
+        let rain = []
+        for (let index = 0; index < Data.length; index++) {
+            if (Data[index]["DateTime"].includes("T05:00:00+08:00") && Data[index]["HasPrecipitation"]) {
+                rain.push("5")
+            } else if (Data[index]["DateTime"].includes("T06:00:00+08:00") && Data[index]["HasPrecipitation"]) {
+                rain.push("6")
+            } else if (Data[index]["DateTime"].includes("T07:00:00+08:00") && Data[index]["HasPrecipitation"]) {
+                rain.push("7")
+            }
+        }
+        let text = ""
+        if (rain.length != 0) {
+            if (rain.length == 3) {
+                text = "今天 [需要攜帶] 雨具出門"
+            } else {
+                for (let index = 0; index < rain.length; index++) {
+                    text = text + rain[index] + "點 "
+                }
+                text = text + "出門的話 [需要攜帶] 雨具"
+            }
+        } else {
+            text = "今天 [不需攜帶] 雨具出門"
+        }
+        client.broadcast("U2916610baf5b8c2a2e48378742e22257", "早上~好\n美好的時光從起床開始\n\n" + text + "\n\n更多資訊請選擇 [小時精準預報]\n上述預報以 [永康區] 為基準\nBeta 實驗性功能 僅供參考")
+        fs.writeFileSync('./Json/Line/Cache.json', JSON.stringify(Cache, null, "\t"))
+    }
+}
 
 //#region 訊息處理區塊
 client.on('message', async function (event) {
