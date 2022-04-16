@@ -5,6 +5,9 @@
 
 - DWHS Weather Helper Service ( DWHS 天氣小幫手 )
 
+# ⚠️ 停止支援
+- 已由新版取代 [EEW](https://github.com/ExpTechTW/EEW)
+
 ## 索引
 - [文檔](#文檔)
 - [注意](#注意)
